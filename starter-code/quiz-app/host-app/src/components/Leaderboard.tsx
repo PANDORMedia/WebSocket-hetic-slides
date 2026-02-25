@@ -36,7 +36,7 @@ function Leaderboard({ rankings }: LeaderboardProps) {
         {/* TODO: Pour chaque joueur dans rankings, afficher un .leaderboard-item */}
         {/* TODO: Afficher rang, nom et score */}
         {rankings.length === 0 ? (
-          <p style={{ color: '#94a3b8' }}>Aucun joueur à afficher.</p>
+          <p className="leaderboard-recap">Aucun joueur à afficher.</p>
         ) : (
           rankings.map((player, i) => (
             <div className="leaderboard-item" key={player.name}>
@@ -59,11 +59,9 @@ function Leaderboard({ rankings }: LeaderboardProps) {
 
       {/* Recap sous le classement */}
       {rankings.length > 0 && (
-        <p style={{ marginTop: '1.5rem', color: '#94a3b8', fontSize: '0.9rem' }}>
+        <p className="leaderboard-recap">
           {rankings.length} joueur{rankings.length > 1 ? 's' : ''} · Meilleur score :{' '}
-          <span style={{ color: '#a78bfa', fontWeight: 700 }}>
-            {rankings[0].score.toLocaleString()} pts
-          </span>
+          <span>{rankings[0].score.toLocaleString()} pts</span>
         </p>
       )}
 
