@@ -31,12 +31,24 @@ interface ResultsProps {
  *
  * Astuce : const maxCount = Math.max(...distribution, 1)
  */
+
+const CHOICE_LABELS = ['A', 'B', 'C', 'D']
+
+// Classes CSS des badges de couleur dans les barres de resultats
+const CHOICE_LABEL_BADGE_CLASSES = [
+  'choice-label-badge choice-label-badge--red',
+  'choice-label-badge choice-label-badge--blue',
+  'choice-label-badge choice-label-badge--yellow',
+  'choice-label-badge choice-label-badge--green',
+]
+
 function Results({ correctIndex, distribution, choices, onNext }: ResultsProps) {
   // On demarre les barres a 0 puis on les anime apres un court delai
   // Astuce : const maxCount = Math.max(...distribution, 1)
   const [widths, setWidths] = useState<number[]>([0, 0, 0, 0])
 
   const maxCount = Math.max(...distribution, 1)
+  const totalAnswers = distribution.reduce((a, b) => a + b, 0)
 
   useEffect(() => {
     // Reset a 0 d'abord (si on change de question)
@@ -53,11 +65,6 @@ function Results({ correctIndex, distribution, choices, onNext }: ResultsProps) 
     return () => clearTimeout(timer)
   }, [distribution])
 
-  const CHOICE_LABELS = ['A', 'B', 'C', 'D']
-  const CHOICE_COLORS = ['#e21b3c', '#1368ce', '#d89e00', '#26890c']
-
-  const totalAnswers = distribution.reduce((a, b) => a + b, 0)
-
   return (
     <div className="phase-container">
       <div className="results-container">
@@ -66,13 +73,10 @@ function Results({ correctIndex, distribution, choices, onNext }: ResultsProps) 
         <h1>Résultats</h1>
 
         {/* Recap rapide */}
-        <p style={{ color: '#94a3b8', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+        <p className="results-recap">
           {totalAnswers} réponse{totalAnswers > 1 ? 's' : ''} reçue{totalAnswers > 1 ? 's' : ''}
           {' · '}
-          Bonne réponse :{' '}
-          <span style={{ color: '#10b981', fontWeight: 700 }}>
-            {choices[correctIndex]}
-          </span>
+          Bonne réponse : <strong>{choices[correctIndex]}</strong>
         </p>
 
         {/* TODO: Pour chaque choix, afficher une barre de resultat */}
@@ -88,18 +92,7 @@ function Results({ correctIndex, distribution, choices, onNext }: ResultsProps) 
             <div className="result-bar-container" key={i}>
               {/* Label du choix */}
               <div className="result-bar-label">
-                <span
-                  style={{
-                    display: 'inline-block',
-                    background: CHOICE_COLORS[i],
-                    color: 'white',
-                    borderRadius: 4,
-                    padding: '0 6px',
-                    fontWeight: 700,
-                    fontSize: '0.8rem',
-                    marginRight: '0.4rem',
-                  }}
-                >
+                <span className={CHOICE_LABEL_BADGE_CLASSES[i]}>
                   {CHOICE_LABELS[i]}
                 </span>
                 {choice}
@@ -123,28 +116,14 @@ function Results({ correctIndex, distribution, choices, onNext }: ResultsProps) 
 
               {/* Nombre de reponses a droite si barre trop petite */}
               {pct <= 15 && (
-                <span
-                  style={{
-                    minWidth: 24,
-                    textAlign: 'right',
-                    color: '#94a3b8',
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                  }}
-                >
-                  {count}
-                </span>
+                <span className="result-bar-count-outside">{count}</span>
               )}
             </div>
           )
         })}
 
         {/* TODO: Bouton "Question suivante" */}
-        <button
-          className="btn-primary"
-          onClick={onNext}
-          style={{ marginTop: '2rem', width: '100%' }}
-        >
+        <button className="btn-primary btn-next" onClick={onNext}>
           Question suivante →
         </button>
 
