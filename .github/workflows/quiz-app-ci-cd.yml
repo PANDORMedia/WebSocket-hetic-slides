@@ -1,0 +1,62 @@
+name: Quiz App CI/CD
+
+on:
+  pull_request:
+    paths:
+      - "starter-code/quiz-app/**"
+      - ".github/workflows/quiz-app-ci-cd.yml"
+  push:
+    branches: [main]
+    paths:
+      - "starter-code/quiz-app/**"
+      - ".github/workflows/quiz-app-ci-cd.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: quiz-app-ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci-build:
+    name: Build server + host + player
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install server dependencies
+        working-directory: starter-code/quiz-app/server
+        run: npm install
+
+      - name: Type-check server
+        working-directory: starter-code/quiz-app/server
+        run: npm run typecheck
+
+      - name: Build server
+        working-directory: starter-code/quiz-app/server
+        run: npm run build
+
+      - name: Install host dependencies
+        working-directory: starter-code/quiz-app/host-app
+        run: npm install
+
+      - name: Build host
+        working-directory: starter-code/quiz-app/host-app
+        run: npm run build
+
+      - name: Install player dependencies
+        working-directory: starter-code/quiz-app/player-app
+        run: npm install
+
+      - name: Build player
+        working-directory: starter-code/quiz-app/player-app
+        run: npm run build
