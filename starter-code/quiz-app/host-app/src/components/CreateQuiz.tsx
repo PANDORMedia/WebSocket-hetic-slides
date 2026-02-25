@@ -44,6 +44,16 @@ interface QuestionDraft {
 
 const DEFAULT_TIMER = 20
 
+// Classes CSS des badges de couleur par choix (A/B/C/D)
+const CHOICE_BADGE_CLASSES = [
+  'choice-badge choice-badge--red',
+  'choice-badge choice-badge--blue',
+  'choice-badge choice-badge--yellow',
+  'choice-badge choice-badge--green',
+]
+
+const CHOICE_LABELS = ['A', 'B', 'C', 'D']
+
 function makeEmptyQuestion(): QuestionDraft {
   return {
     uid: crypto.randomUUID(),
@@ -131,26 +141,13 @@ function CreateQuiz({ onSubmit }: CreateQuizProps) {
     onSubmit(title.trim(), finalQuestions)
   }
 
-  const CHOICE_COLORS = ['#e21b3c', '#1368ce', '#d89e00', '#26890c']
-  const CHOICE_LABELS = ['A', 'B', 'C', 'D']
-
   return (
-    <div className="phase-container" style={{ maxWidth: 680, width: '100%' }}>
+    <div className="phase-container create-form-container">
       <h1>Créer un Quiz</h1>
 
       {/* Erreurs de validation */}
       {errors.length > 0 && (
-        <div
-          style={{
-            background: '#7f1d1d',
-            color: '#fca5a5',
-            borderRadius: 8,
-            padding: '0.75rem 1rem',
-            marginBottom: '1rem',
-            textAlign: 'left',
-            fontSize: '0.9rem',
-          }}
-        >
+        <div className="validation-errors">
           {errors.map((e, i) => (
             <div key={i}>• {e}</div>
           ))}
@@ -213,17 +210,7 @@ function CreateQuiz({ onSubmit }: CreateQuizProps) {
                       title="Bonne réponse"
                     />
                     {/* Badge colore */}
-                    <span
-                      style={{
-                        background: CHOICE_COLORS[ci],
-                        color: 'white',
-                        borderRadius: 6,
-                        padding: '0 8px',
-                        fontWeight: 700,
-                        fontSize: '0.9rem',
-                        flexShrink: 0,
-                      }}
-                    >
+                    <span className={CHOICE_BADGE_CLASSES[ci]}>
                       {CHOICE_LABELS[ci]}
                     </span>
                     <input
@@ -238,7 +225,7 @@ function CreateQuiz({ onSubmit }: CreateQuizProps) {
             </div>
 
             {/* Duree du timer */}
-            <div className="form-group" style={{ maxWidth: 200 }}>
+            <div className="form-group form-timer-group">
               <label htmlFor={`timer-${q.uid}`}>Durée (secondes)</label>
               <select
                 id={`timer-${q.uid}`}
@@ -263,12 +250,8 @@ function CreateQuiz({ onSubmit }: CreateQuizProps) {
         </button>
 
         {/* TODO: Bouton soumettre */}
-        <div style={{ marginTop: '1.5rem' }}>
-          <button
-            type="submit"
-            className="btn-primary"
-            style={{ width: '100%' }}
-          >
+        <div className="submit-wrapper">
+          <button type="submit" className="btn-primary">
             Créer le quiz ({questions.length} question{questions.length > 1 ? 's' : ''})
           </button>
         </div>
