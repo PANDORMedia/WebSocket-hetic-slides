@@ -35,13 +35,81 @@ interface QuestionViewProps {
  * (c'est purement visuel pour projeter au mur)
  */
 function QuestionView({ question, index, total, remaining, answerCount, totalPlayers }: QuestionViewProps) {
+  // Classes CSS du timer selon le temps restant
+  const timerClass = [
+    'countdown-circle',
+    remaining <= 3 ? 'danger' : remaining <= 10 ? 'warning' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const CHOICE_COLORS = ['#e21b3c', '#1368ce', '#d89e00', '#26890c']
+  const CHOICE_LABELS = ['A', 'B', 'C', 'D']
+
   return (
     <div className="phase-container">
+
       {/* TODO: En-tete "Question {index + 1} / {total}" */}
+      <div className="question-header">
+        <span>Question {index + 1} / {total}</span>
+        <span>{answerCount} / {totalPlayers} réponses</span>
+      </div>
+
       {/* TODO: Timer avec .countdown-circle (+ .warning / .danger selon remaining) */}
+      <div className="countdown">
+        <div className={timerClass}>{remaining}</div>
+      </div>
+
       {/* TODO: Texte de la question avec .question-text */}
+      <p className="question-text">{question.text}</p>
+
       {/* TODO: Grille des 4 choix avec .choices-grid et .choice-card */}
+      {/* Note : cote host on affiche les choix mais sans interaction */}
+      <div className="choices-grid">
+        {question.choices.map((choice, i) => (
+          <div
+            key={i}
+            className="choice-card"
+            style={{ background: CHOICE_COLORS[i] }}
+          >
+            <span style={{ marginRight: '0.5rem', fontWeight: 700 }}>
+              {CHOICE_LABELS[i]}
+            </span>
+            {choice}
+          </div>
+        ))}
+      </div>
+
       {/* TODO: Compteur "{answerCount} / {totalPlayers} reponses" */}
+      <div className="answer-counter">
+        <div
+          style={{
+            marginTop: '1rem',
+            height: 6,
+            background: '#1e1e4a',
+            borderRadius: 9999,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              background: '#7c3aed',
+              borderRadius: 9999,
+              transition: 'width 0.4s ease',
+              width: totalPlayers > 0
+                ? `${Math.round((answerCount / totalPlayers) * 100)}%`
+                : '0%',
+            }}
+          />
+        </div>
+        <p style={{ marginTop: '0.4rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+          {totalPlayers > 0
+            ? `${Math.round((answerCount / totalPlayers) * 100)}% ont répondu`
+            : 'En attente de réponses...'}
+        </p>
+      </div>
+
     </div>
   )
 }
